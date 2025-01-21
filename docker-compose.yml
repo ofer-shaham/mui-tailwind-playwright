@@ -1,0 +1,66 @@
+
+services:
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"  # Change the port as needed
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/app  # Mount your frontend code
+    user: root
+
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile.playwright
+    environment:
+      - DISPLAY=${DISPLAY}
+    network_mode: host  # Use host network for X11
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - .:/app
+    depends_on:
+      - frontend  # Ensure frontend is started before Playwright
+    user: root
+
+# services:
+  x11-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.xeyes
+    environment:
+      DISPLAY: "${DISPLAY}"  # Use the display environment variable
+    network_mode: host  # Use host network for X11
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix  # Mount X11 socket
+    command: ["xeyes"]  # Command to run the application
+    depends_on:
+      - frontend  # Ensure frontend is started before Playwright
+
+#   frontend:
+#     build:
+#       context: .  # Path to your frontend Dockerfile
+#       dockerfile: Dockerfile.frontend
+#     ports:
+#       - "5173:5173"  # Change the port as needed
+#     environment:
+#       - NODE_ENV=development
+#     volumes:
+#       - .:/app  # Mount your frontend code
+#     user: root
+
+  # playwright:
+  #   build:
+  #     context: .  # Path to your Playwright Dockerfile
+  #     dockerfile: Dockerfile.playwright
+  #   environment:
+  #     - DISPLAY=host.docker.internal:2
+  #   volumes:
+  #     - /tmp/.X11-unix:/tmp/.X11-unix
+  #     - .:/app
+  #   depends_on:
+  #     - frontend  # Ensure frontend is started before Playwright

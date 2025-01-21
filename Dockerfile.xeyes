@@ -1,0 +1,14 @@
+# Use a base image with X11 support
+FROM ubuntu:20.04
+
+# Install X11 applications
+RUN apt-get update && apt-get install -y \
+    x11-apps \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the display environment variable (optional, can be set in docker-compose.yml)
+ENV DISPLAY=host.docker.internal:0
+
+# Set the working directory (optional)
+WORKDIR /app

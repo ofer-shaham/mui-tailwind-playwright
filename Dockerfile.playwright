@@ -1,0 +1,13 @@
+# Dockerfile for Playwright
+FROM mcr.microsoft.com/playwright:v1.49.1-jammy
+
+# Set the working directory
+WORKDIR /app
+
+# Copy your Playwright test files
+COPY . .
+
+# Install dependencies
+RUN npm install
+# Command to run Playwright tests
+CMD ["npx", "playwright", "test"]

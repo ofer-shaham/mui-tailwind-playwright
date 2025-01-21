@@ -1,0 +1,36 @@
+FROM node:18-slim
+
+# Set the working directory inside the container to /app
+
+RUN mkdir /app && chown node:node /app
+
+WORKDIR /app
+
+USER node
+COPY --chown=node:node ./package.json ./package.json
+
+# Copy only the package.json file to the working directory
+# COPY package.json .
+
+# Install npm dependencies based on the package.json
+# RUN pnpm config set prefix /tmp/global_npm
+RUN npm config set prefix /tmp/global_npm
+
+RUN npm install -g pnpm
+ENV PATH=$PATH:/tmp/global_npm/bin
+
+RUN pnpm install
+
+# Copy the rest of the application code to the working directory
+COPY --chown=node:node . .
+RUN chmod 644 /app/vite.config.ts
+
+# Expose port 5002 to allow external access
+EXPOSE 5173
+
+#RUN npm run build1
+
+
+# CMD chmod 644 /app/vite.config.ts.*
+# Specify the command to run the application when the container starts
+CMD [ "npm", "run", "dev"]
