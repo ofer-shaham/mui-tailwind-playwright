@@ -1,13 +1,20 @@
 # Dockerfile for Playwright
 FROM mcr.microsoft.com/playwright:v1.49.1-jammy
 
+# Create a non-root user and set the working directory
+RUN useradd -m node && mkdir /app && chown node:node /app
+
 # Set the working directory
 WORKDIR /app
 
+# Switch to the node user
+USER node
+
 # Copy your Playwright test files
-COPY . .
+COPY --chown=node:node . .
 
 # Install dependencies
 RUN npm install
+
 # Command to run Playwright tests
 CMD ["npx", "playwright", "test"]
